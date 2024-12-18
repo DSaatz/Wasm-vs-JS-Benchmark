@@ -6,12 +6,7 @@ This benchmark compares the performance of JavaScript and WebAssembly (Wasm) imp
 
 - **Algorithm**: Both implementations use the naive recursive algorithm based on the standard Fibonacci equation:
   
-  $$F(n) = 
-  \begin{cases} 
-  0 & \text{if } n = 0, \\
-  1 & \text{if } n = 1, \\
-  F(n-1) + F(n-2) & \text{if } n > 1. 
-  \end{cases}$$
+ ![Fibonacci Equation](/visualization/equation.png)
 
 - **System Preparation**: Background processes were minimized to ensure that the benchmark could utilize maximum available resources.
 
