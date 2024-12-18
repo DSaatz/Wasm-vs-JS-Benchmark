@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>wasm vs JS</title>
+</head>
+<body>
+    <h1>Wasm vs JS Executiontimes Benchmark</h1>
+    <p>This Benchmark executes the recursive Fibonacci algorithm in both languages for the nth number to compare the execution times </p>
+    <p>Check the Browsers console for the results</p>
+</body>
+<script>
+    const n = 40;
+    
+    // JS Implementation of the recursive Fibonacci algorithm
+    function fibonacciJS(n) {
+        if (n <= 1) {
+            return n;
+        }
+        return fibonacciJS(n - 1) + fibonacciJS(n - 2);
+    }
+
+    // Load the wasm module and return the fibonacci function
+    async function loadWasm() {
+        try {
+            const response = await fetch('./fibonacci.wasm'); // Ensure the path is correct
+            if (!response.ok) {
+            throw new Error(`Failed to fetch WebAssembly file: ${response.statusText}`);
+            }
+            const bytes = await response.arrayBuffer();
+            const wasmModule = await WebAssembly.instantiate(bytes);
+            return wasmModule.instance.exports.fibonacci; // Return the "fibonacci" export
+        } catch (error) {
+            console.error("Error loading WebAssembly:", error);
+        }
+    }
+
+
+    // Benchmark the execution times of the JS and Wasm implementations
+    async function benchmark() {
+        const wasmFibonacci = await loadWasm();
+        const jsTimes = [];
+        const wasmTimes = [];
+
+        for (let i = 0; i <= n; i++){
+
+            const jsStart = performance.now();
+            fibonacciJS(i);
+            const jsEnd = performance.now();
+            jsTimes.push(jsEnd - jsStart);
+
+            const wasmStart = performance.now();
+            wasmFibonacci(i);
+            const wasmEnd = performance.now();
+            wasmTimes.push(wasmEnd - wasmStart);
+        }
+        console.log("JS Times: ", jsTimes);
+        console.log("Wasm Times: ", wasmTimes);
+        //arrays contain milliseconds used for n+1th number at index n
+    }
+    benchmark();
+</script>
+</html>
